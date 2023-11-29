@@ -1,0 +1,1 @@
+python MainCode.py --dataset MNIST --type iid --batch_size 64 --global_iter 400 --Method 0 --Learning_rate 0 --seed 0
