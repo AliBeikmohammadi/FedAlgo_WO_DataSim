@@ -3,7 +3,7 @@ Implementation of **FedAlgo_WO_DataSim**, as presented in:
 * On the Convergence of Federated Learning Algorithms without Data Similarity. Submitted to the IEEE Transactions on Big Data.
 
 
-# Additional Numerical Evaluations on Deep Neural Networks
+# Numerical Evaluations on Deep Neural Networks
 We included (additional) experiments from running FedAvg, FedProx, error-feedback FedAvg, and error-feedback FedAvg with fixed, diminishing, and step-decay step sizes over the MNIST dataset and FashionMNIST datasets. 
 We reported the average and standard deviation of training loss and test accuracy from running the algorithms with diminishing step sizes in Figures 1 and 2, with diminishing step sizes in Figures 3 and 4, and with the step-decay step sizes in Figures 5 and 6.
 The shaded regions correspond to the standard deviation of the average evaluation over five trials.
