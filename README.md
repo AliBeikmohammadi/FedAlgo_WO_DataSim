@@ -121,7 +121,6 @@ optional arguments:
 ## How to Plot the Results
 > To draw output figures with the desired features use `PlotResults.ipynb`.
 
-
 # Citation
 * Submitted to the IEEE Transactions on Big Data.
 
