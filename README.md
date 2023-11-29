@@ -75,7 +75,7 @@ import matplotlib.pyplot as plt
 
 # Usage
 ## How to Run Experiments
-### Training a FCNN on [MNIST dataset](http://yann.lecun.com/exdb/mnist/)
+### Training on [MNIST dataset](http://yann.lecun.com/exdb/mnist/) or [FashionMNIST dataset](https://github.com/zalandoresearch/fashion-mnist)
 > The script below starts a new training process on the MNIST dataset with customized settings.
 ```
 python MainCode.py -h
@@ -104,8 +104,8 @@ optional arguments:
                Learning_rate2={'lr':'Step-decay', 'c': 0.8,  'step': 50, 'gamma': 0.5}
 
   --seed SEED
+```
 
-´´´
 > As a result of running this code; data folder, CSV/[dataset name] folder, and tenorboard folder will be created.
 
 * dataset will be downloaded in data folder.
