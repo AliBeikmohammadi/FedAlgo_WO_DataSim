@@ -1,5 +1,4 @@
 # FedAlgo_WO_DataSim
-# DistributedSGDM
 Implementation of **FedAlgo_WO_DataSim**, as presented in:
 * On the Convergence of Federated Learning Algorithms without Data Similarity. Submitted to the IEEE Transactions on Big Data.
 
