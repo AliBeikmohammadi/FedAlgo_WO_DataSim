@@ -76,7 +76,7 @@ import matplotlib.pyplot as plt
 # Usage
 ## How to Run Experiments
 ### Training on [MNIST dataset](http://yann.lecun.com/exdb/mnist/) or [FashionMNIST dataset](https://github.com/zalandoresearch/fashion-mnist)
-> The script below starts a new training process on the MNIST dataset with customized settings.
+> The script below starts a new training process with customized settings.
 ```
 python MainCode.py -h
 
