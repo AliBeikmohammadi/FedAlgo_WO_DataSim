@@ -40,17 +40,23 @@ The shaded regions correspond to the standard deviation of the average evaluatio
 
 > To run a new test .
 ```
-import argparse
+import random
+import os
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 import torch.optim as optim
-from torch.utils.data import DataLoader
-from torchvision.datasets import MNIST, FashionMNIST
-from torchvision.transforms import transforms
-import torchvision.models as models
+from torch.utils.data import Subset, ConcatDataset
 from torch.utils.tensorboard import SummaryWriter
+from torch.optim.lr_scheduler import StepLR
+from torchvision.datasets import FashionMNIST, MNIST
+from torchvision import datasets, transforms
+import numpy as np
 import pandas as pd
-import os
+from copy import deepcopy
+import matplotlib.pyplot as plt
+import argparse
+import json
 ```
 > To aggregate CSV files.
 ```
@@ -72,104 +78,52 @@ import matplotlib.pyplot as plt
 ### Training a FCNN on [MNIST dataset](http://yann.lecun.com/exdb/mnist/)
 > The script below starts a new training process on the MNIST dataset with customized settings.
 ```
-python MNIST_SGDM_v1.py -h
+python MainCode.py -h
 
-usage: MNIST_SGDM_v1.py [-h] [--seed_number SEED_NUMBER]
-                        [--learning_rate LEARNING_RATE] [--beta BETA]
-                        [--L2 L2] [--num_epochs NUM_EPOCHS]
-                        [--num_nodes NUM_NODES] [--method METHOD]
-                        [--max_norm MAX_NORM] [--top_k TOP_K]
-                        [--clip_value CLIP_VALUE]
+usage: MainCode.py [-h] [--dataset DATASET] [--type TYPE] [--batch_size BATCH_SIZE] [--global_iter GLOBAL_ITER]
+                   [--Method METHOD] [--Learning_rate LEARNING_RATE] [--seed SEED]
 
-Train a neural network on MNIST
+Federated Learning
 
 optional arguments:
   -h, --help            show this help message and exit
-  --seed_number SEED_NUMBER
-                        seed number
-  --learning_rate LEARNING_RATE
-                        learning rate for the optimizer
-  --beta BETA           beta for the optimizer
-  --L2 L2               weight_decay (L2 penalty)
-  --num_epochs NUM_EPOCHS
-                        number of epochs to train
-  --num_nodes NUM_NODES
-                        number of nodes
-  --method METHOD       method: none, norm, clip_grad_norm, clip_grad_value,
-                        Top-K
-  --max_norm MAX_NORM   gradient norm clipping max value (necessary if method:
-                        clip_grad_norm)
-  --top_k TOP_K         number of top elements to keep in compressed gradient
-                        (necessary if method: Top-K)
-  --clip_value CLIP_VALUE
-                        gradient clipping value (necessary if method:
-                        clip_grad_value)
-```
-> Set --beta 1 in case you need to train DistributedSGD instead of DistributedSGDM.
-> 
-> As a result of running this code; data folder, MNIST_CSV folder , and runs folder will be created.
+  --dataset DATASET     MNIST, FMNIST
+  --type TYPE           iid, non_iid1 non_iid2
+  --batch_size BATCH_SIZE
+  --global_iter GLOBAL_ITER
+  --Method METHOD
+               0, 1, 2, 3
+               Method0={'Algo':'FedAVG', 'loc_iter': 30}
+               Method1={'Algo':'EC_FedAVG', 'loc_iter': 30, 'topk': 1}
+               Method2={'Algo':'FedProx2', 'loc_iter': 30, 'alpha':0.1}
+               Method3={'Algo':'EC_FedProx2', 'loc_iter': 30, 'alpha':0.1, 'topk': 1} 
+  --Learning_rate LEARNING_RATE
+               0, 1, 2
+               Learning_rate0={'lr':'Fix', 'c': 2}
+               Learning_rate1={'lr':'Diminishing', 'c': 0.8,  'v': 0.51}
+               Learning_rate2={'lr':'Step-decay', 'c': 0.8,  'step': 50, 'gamma': 0.5}
+
+  --seed SEED
+
+´´´
+> As a result of running this code; data folder, CSV/[dataset name] folder, and tenorboard folder will be created.
 
 * dataset will be downloaded in data folder.
 
-* You can simultaneously monitor training progress through tensorboard by the files saved in runs folder.
+* You can simultaneously monitor training progress through tensorboard by the files saved in tensorboard folder.
 
-* Training process will be loged also in a CSV file in MNIST_CSV folder.
+* Training process will be loged also in a CSV file in CSV/[dataset name] folder.
 
-
-### Training a ResNet-18 on [FashionMNIST dataset](https://github.com/zalandoresearch/fashion-mnist)
-> The script below starts a new training process on the FashionMNIST dataset with customized settings.
-```
-python FashionMNIST_ResNet18_SGDM_v1.py -h
-
-usage: FashionMNIST_ResNet18_SGDM_v1.py [-h] [--seed_number SEED_NUMBER]
-                                        [--learning_rate LEARNING_RATE]
-                                        [--beta BETA] [--L2 L2]
-                                        [--num_epochs NUM_EPOCHS]
-                                        [--num_nodes NUM_NODES]
-                                        [--method METHOD]
-                                        [--max_norm MAX_NORM] [--top_k TOP_K]
-                                        [--clip_value CLIP_VALUE]
-
-Train a neural network on FashionMNIST ResNet18
-
-optional arguments:
-  -h, --help            show this help message and exit
-  --seed_number SEED_NUMBER
-                        seed number
-  --learning_rate LEARNING_RATE
-                        learning rate for the optimizer
-  --beta BETA           beta for the optimizer
-  --L2 L2               weight_decay (L2 penalty)
-  --num_epochs NUM_EPOCHS
-                        number of epochs to train
-  --num_nodes NUM_NODES
-                        number of nodes
-  --method METHOD       method: none, norm, clip_grad_norm, clip_grad_value,
-                        Top-K
-  --max_norm MAX_NORM   gradient norm clipping max value (necessary if method:
-                        clip_grad_norm)
-  --top_k TOP_K         number of top elements to keep in compressed gradient
-                        (necessary if method: Top-K)
-  --clip_value CLIP_VALUE
-                        gradient clipping value (necessary if method:
-                        clip_grad_value)
-```
-> Set --beta 1 in case you need to train DistributedSGD instead of DistributedSGDM.
-> 
-> As a result of running this code; data folder, FashionMNIST_ResNet18_CSV folder , and runs folder will be created.
-* dataset will be downloaded in data folder.
-* You can simultaneously monitor training progress through tensorboard by the files saved in runs folder.
-* Training process will be loged also in a CSV file in FashionMNIST_ResNet18_CSV folder.
 
 ## How to Aggregate CSV Files and generate Mean and STD over different trials
-> Use `aggregateCSVs.ipynb` to generate a single CSV file containing the mean and standard deviation of 5 runs on each experiment's setup.
+> Use `AggregateCSVs.ipynb` to generate a single CSV file containing the mean and standard deviation of 5 runs on each experiment's setup.
 
 ## How to Plot the Results
 > To draw output figures with the desired features use `PlotResults.ipynb`.
 
 
 # Citation
-* Submitted to the IEEE Transactions on Signal Processing.
+* Submitted to the IEEE Transactions on Big Data.
 
 Please cite the accompanied paper, if you find this useful:
 ```
