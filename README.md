@@ -1,6 +1,6 @@
 # FedAlgo_WO_DataSim
 Implementation of **FedAlgo_WO_DataSim**, as presented in:
-* On the Convergence of Federated Learning Algorithms without Data Similarity. Submitted to the IEEE Transactions on Big Data.
+* On the Convergence of Federated Learning Algorithms without Data Similarity. Published in the IEEE Transactions on Big Data.
 
 
 # Numerical Evaluations on Deep Neural Networks
@@ -122,9 +122,18 @@ optional arguments:
 > To draw output figures with the desired features use `PlotResults.ipynb`.
 
 # Citation
-* Submitted to the IEEE Transactions on Big Data.
+* Published in the IEEE Transactions on Big Data.
 
 Please cite the accompanied paper, if you find this useful:
 ```
-To be completed
+@ARTICLE{Beikmohammadi_FedAlgo_WO_DataSim,
+  author={Beikmohammadi, Ali and Khirirat, Sarit and Magnússon, Sindri},
+  journal={IEEE Transactions on Big Data}, 
+  title={On the Convergence of Federated Learning Algorithms Without Data Similarity}, 
+  year={2024},
+  volume={},
+  number={},
+  pages={1-10},
+  keywords={Convergence;Federated learning;Stochastic processes;Optimization;Data models;Schedules;Computational modeling;Compression algorithms;federated learning;gradient methods;machine learning},
+  doi={10.1109/TBDATA.2024.3423693}}
 ```
